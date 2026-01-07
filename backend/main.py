@@ -2,7 +2,9 @@ from fastapi import FastAPI, UploadFile, File
 import pandas as pd
 import traceback
 from backend.nlp.intent import detect_intent
+from backend.insights.generator import generate_insight
 
+DATAFRAME_STORE = {}
 
 app = FastAPI(title="AI Autonomous Data Analyst")
 
@@ -10,34 +12,34 @@ app = FastAPI(title="AI Autonomous Data Analyst")
 async def upload_csv(file: UploadFile = File(...)):
     try:
         file.file.seek(0)
-        raw = file.file.read()
-
-        print("---- RAW FILE CONTENT (first 500 chars) ----")
-        print(raw[:500])
-
-        file.file.seek(0)
         df = pd.read_csv(file.file)
 
-        print("---- DATAFRAME HEAD ----")
-        print(df.head())
+        DATAFRAME_STORE["df"] = df
 
         return {
+            "message": "File uploaded successfully",
             "rows": df.shape[0],
             "columns": list(df.columns)
         }
 
     except Exception as e:
-        print("---- ERROR TRACEBACK ----")
-        traceback.print_exc()
         return {"error": str(e)}
-    
+
 @app.post("/question")
 async def ask_question(payload: dict):
     question = payload.get("question", "")
     intent = detect_intent(question)
 
+    df = DATAFRAME_STORE.get("df")
+
+    if df is None:
+        return {"error": "No dataset uploaded yet"}
+
+    insight = generate_insight(df, intent)
+
     return {
         "question": question,
-        "detected_intent": intent
+        "detected_intent": intent,
+        "insight": insight
     }
 
