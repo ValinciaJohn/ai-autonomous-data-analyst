@@ -1,6 +1,8 @@
 from fastapi import FastAPI, UploadFile, File
 import pandas as pd
 import traceback
+from backend.nlp.intent import detect_intent
+
 
 app = FastAPI(title="AI Autonomous Data Analyst")
 
@@ -28,3 +30,14 @@ async def upload_csv(file: UploadFile = File(...)):
         print("---- ERROR TRACEBACK ----")
         traceback.print_exc()
         return {"error": str(e)}
+    
+@app.post("/question")
+async def ask_question(payload: dict):
+    question = payload.get("question", "")
+    intent = detect_intent(question)
+
+    return {
+        "question": question,
+        "detected_intent": intent
+    }
+
