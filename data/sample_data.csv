@@ -1,0 +1,11 @@
+date,region,product,category,sales,discount
+01-01-2024,North,Product A,Electronics,1200,50
+02-01-2024,North,Product B,Electronics,950,30
+03-01-2024,South,Product A,Electronics,1100,40
+04-01-2024,South,Product C,Furniture,700,20
+05-01-2024,East,Product B,Electronics,1050,35
+06-01-2024,East,Product C,Furniture,650,25
+07-01-2024,West,Product A,Electronics,900,30
+08-01-2024,West,Product B,Electronics,850,20
+09-01-2024,North,Product C,Furniture,780,15
+10-01-2024,South,Product B,Electronics,980,45
